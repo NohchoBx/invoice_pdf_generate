@@ -1,11 +1,11 @@
 {
-    "name": "invoice_pdf_generate",
-    "short_name": "invoice_pdf_generate",
+    "name": "Benelux Devis",
+    "short_name": "BeneGenerator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Benelux Services Devis Generator",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

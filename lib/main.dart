@@ -1,78 +1,100 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'file_handle_api.dart';
-import 'pdf_invoice_api.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:invoice_pdf_generate/home/home_list_factures.dart';
+import 'package:invoice_pdf_generate/utils/utils.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'authentication/providers/auth_provider.dart';
+import 'authentication/screens/login.dart';
+import 'db/task_controller.dart';
+import 'devis_form/creation_devis.dart';
+import 'firebase_options.dart';
+import 'home/home_list_devis.dart';
+import 'model/devis_model.dart';
+
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _authState = ref.watch(authStateProvider);
+    return MaterialApp(
+        theme: ThemeData(
+          primaryColor: Colors.green,
+          primarySwatch: Colors.green,
+        ),
+        home: _authState.when(
+        data: (data)  {
+          if (data != null) {
+            return const HomePage();
+          } else {
+            return LoginPage();
+          }
+        },
+
+        loading: () => const CircularProgressIndicator(),
+        error: (e, trace) => const Text('error', textAlign: TextAlign.center,)));
+  }
+
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Invoice PDF Generate',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-      home: const HomePage(),
-    );
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late TabController _tabController;
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Invoice'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.picture_as_pdf,
-              size: 72.0,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 15.0),
-            const Text(
-              'Generate Invoice',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 30.0),
-            ElevatedButton(
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 8.0),
-                child: Text(
-                  'Invoice PDF',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              onPressed: () async {
-                // generate pdf file
-                final pdfFile = await PdfInvoiceApi.generate();
-
-                // opening the pdf file
-                FileHandleApi.openFile(pdfFile);
-              },
-            ),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Devis'),
+            Tab(text: 'Factures'),
           ],
         ),
       ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const  [
+           HomeDevisList(),
+           HomeFacturesList(),
+        ],
+      ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
+    _getLastDevisId();
+
+  }
+
+  Future<void> _getLastDevisId() async {
+    final List<int> ids = await TaskManager().getLastCreatedDevisId();
+    setState(() {
+
+      Utils.lastDevisId = ids[0];
+      Utils.lastFactureId = ids[1];
+    });
+    print('rentre dans set state' + Utils.lastDevisId.toString());
+
   }
 }

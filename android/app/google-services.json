@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "242812032793",
+    "project_id": "benelux-services",
+    "storage_bucket": "benelux-services.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242812032793:android:3f27b89dc55d05fd439788",
+        "android_client_info": {
+          "package_name": "com.sabikrahat.invoice_pdf_generate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242812032793-f34s1ftfbt3f3naa4gnl6nnb21p6vkom.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvJhrmS76XBcHBlkqCbAegpu-pOczd564"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242812032793-f34s1ftfbt3f3naa4gnl6nnb21p6vkom.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
